@@ -1,0 +1,29 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "dashboard-economico"
+version = "1.0.0"
+description = "Dashboard para monitoramento de indicadores brasileiros"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "yfinance>=0.2.36",
+    "pandas>=2.2.0",
+    "plotly>=5.18.0",
+    "streamlit>=1.29.0",
+    "bcb>=1.1.0",
+    "python-dotenv>=1.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0",
+    "black>=23.0.0",
+    "flake8>=6.0.0",
+]
+
+[tool.black]
+line-length = 88
+target-version = ['py312']

@@ -1,0 +1,20 @@
+{
+  "builds": [
+    {
+      "src": "app/pages/dashboard.py",
+      "use": "@vercel/python",
+      "config": {
+        "runtime": "python3.12"
+      }
+    }
+  ],
+  "routes": [
+    {
+      "src": "(.*)",
+      "dest": "app/pages/dashboard.py"
+    }
+  ],
+  "env": {
+    "PYTHON_VERSION": "3.12"
+  }
+}

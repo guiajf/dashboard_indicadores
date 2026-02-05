@@ -37,13 +37,11 @@ end_date = (get_brasil_time() + timedelta(days=1)).strftime('%Y-%m-%d')
 # Dicionário de indicadores atualizado
 indicadores = {
     'Ibovespa': {'codigo': '^BVSP', 'fonte': 'YF', 'unidade': 'Pontos'},
-    'S&P 500': {'codigo': '^GSPC', 'fonte': 'YF', 'unidade': 'Pontos'},  # Adicionado
+    'PIB Total': {'codigo': 4380, 'fonte': 'BCB', 'unidade': 'R$ milhões'},
     'Taxa Selic': {'codigo': 4189, 'fonte': 'BCB', 'unidade': '% ao ano'},
     'IPCA Mensal': {'codigo': 433, 'fonte': 'BCB', 'unidade': '%'},
-    'IPCA Acum 12 meses': {'codigo': 13522, 'fonte': 'BCB', 'unidade': '%'},
     'Câmbio USD/BRL': {'codigo': 3696, 'fonte': 'BCB', 'unidade': 'R$'},
     'Taxa de Desemprego': {'codigo': 24369, 'fonte': 'BCB', 'unidade': '%'},
-    'PIB Total': {'codigo': 4380, 'fonte': 'BCB', 'unidade': 'R$ milhões'},
 }
 
 # Cache otimizado para Python 3.12
@@ -67,7 +65,7 @@ def fetch_yfinance_data(ticker: str, start_date: str, end_date: str) -> pd.DataF
         
         # Python 3.12+: match case para tratamento de colunas
         match ticker:
-            case '^BVSP' | '^GSPC' | '^IFIX':
+            case '^BVSP':
                 if 'Close' in data.columns:
                     return data[['Close']].rename(columns={'Close': ticker})
             case _:
@@ -131,7 +129,7 @@ with st.sidebar:
     st.info("""
     **Yahoo Finance:**
     - Índices B3 (Ibovespa)
-    - Índices internacionais
+   
     
     **Banco Central:**
     - Indicadores macroeconômicos
@@ -263,11 +261,12 @@ with tab3:
     
     info_text = {
         'Ibovespa': "Principal indicador do desempenho médio das cotações das ações negociadas na B3.",
+        'PIB Total': "Produto Interno Bruto - soma de todos os bens e serviços finais produzidos.",
         'Taxa Selic': "Taxa básica de juros da economia brasileira, definida pelo COPOM.",
         'IPCA Mensal': "Índice Nacional de Preços ao Consumidor Amplo - inflação oficial do Brasil.",
         'Câmbio USD/BRL': "Taxa de câmbio dólar americano/real brasileiro.",
-        'Taxa de Desemprego': "Porcentagem da população economicamente ativa que está desempregada.",
-        'PIB Total': "Produto Interno Bruto - soma de todos os bens e serviços finais produzidos."
+        'Taxa de Desemprego': "Porcentagem da população economicamente ativa que está desempregada."
+       
     }
     
     st.info(info_text.get(indicador_selecionado, "Informações detalhadas sobre este indicador."))

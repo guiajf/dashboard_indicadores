@@ -105,7 +105,7 @@ def baixar_dados(indicador_nome: str) -> pd.DataFrame:
         return pd.DataFrame()
 
 # Interface modernizada
-st.title("📊 Dashboard Econômico - Brasil")
+st.title("📊 Painel Econômico")
 st.caption(f"Última atualização: {get_brasil_time().strftime('%d/%m/%Y %H:%M')}")
 
 # Sidebar
@@ -113,7 +113,7 @@ with st.sidebar:
     st.header("⚙️ Configurações")
     
     indicador_selecionado = st.selectbox(
-        "**Selecione o Indicador:**",
+        "**Selecione o indicador:**",
         options=list(indicadores.keys()),
         index=0,
         help="Escolha o indicador econômico para visualização"
@@ -139,7 +139,7 @@ with st.sidebar:
     """)
     
     st.divider()
-    if st.button("🔄 Atualizar Dados", type="secondary"):
+    if st.button("🔄 Atualizar dados", type="secondary"):
         st.cache_data.clear()
         st.rerun()
 
@@ -238,7 +238,7 @@ with tab2:
         )
         
         # Estatísticas
-        st.subheader("Estatísticas Descritivas")
+        st.subheader("Estatísticas descritivas")
         col1, col2 = st.columns(2)
         
         with col1:
@@ -265,7 +265,7 @@ with tab3:
         'Ibovespa': "Principal indicador do desempenho médio das cotações das ações negociadas na B3.",
         'Taxa Selic': "Taxa básica de juros da economia brasileira, definida pelo COPOM.",
         'IPCA Mensal': "Índice Nacional de Preços ao Consumidor Amplo - inflação oficial do Brasil.",
-        'Câmbio USD/BRL': "Taxa de câmbio Dólar Americano/Real Brasileiro.",
+        'Câmbio USD/BRL': "Taxa de câmbio dólar americano/real brasileiro.",
         'Taxa de Desemprego': "Porcentagem da população economicamente ativa que está desempregada.",
         'PIB Total': "Produto Interno Bruto - soma de todos os bens e serviços finais produzidos."
     }

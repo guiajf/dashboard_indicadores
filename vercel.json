@@ -16,17 +16,5 @@
   ],
   "env": {
     "PYTHON_VERSION": "3.12"
-  },
-  "excludeFiles": [
-    "**/__pycache__/**",
-    "**/*.pyc",
-    "venv/**",
-    ".env/**",
-    "test/**",
-    "tests/**",
-    "*.log",
-    ".gitignore",
-    "README.md",
-    "requirements-dev.txt"
-  ]
+  }
 }

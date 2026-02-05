@@ -13,17 +13,12 @@ st.sidebar.info(f"Python {sys.version}")
 # Suprimir warnings
 warnings.filterwarnings("ignore", category=FutureWarning)
 
-# Configuração da página com recursos mais recentes
+# Configuração da página
 st.set_page_config(
     page_title="Dashboard Econômico Brasil",
     page_icon="📈",
     layout="wide",
-    initial_sidebar_state="expanded",
-    menu_items={
-        'Get Help': 'https://github.com/seu-usuario/dashboard-economico',
-        'Report a bug': "https://github.com/seu-usuario/dashboard-economico/issues",
-        'About': "### Dashboard Econômico Brasil\n\nMonitoramento em tempo real de indicadores econômicos."
-    }
+    initial_sidebar_state="expanded"
 )
 
 # Configuração inicial com fuso horário
@@ -34,7 +29,7 @@ def get_brasil_time():
 start_date = '1994-07-01'
 end_date = (get_brasil_time() + timedelta(days=1)).strftime('%Y-%m-%d')
 
-# Dicionário de indicadores atualizado
+# Dicionário de indicadores
 indicadores = {
     'Ibovespa': {'codigo': '^BVSP', 'fonte': 'YF', 'unidade': 'Pontos'},
     'PIB Total': {'codigo': 4380, 'fonte': 'BCB', 'unidade': 'R$ milhões'},
@@ -44,38 +39,39 @@ indicadores = {
     'Taxa de Desemprego': {'codigo': 24369, 'fonte': 'BCB', 'unidade': '%'},
 }
 
-# Cache otimizado para Python 3.12
-@st.cache_data(ttl=1800, show_spinner="Carregando dados...")  # 30 minutos
+# Cache otimizado
+@st.cache_data(ttl=1800, show_spinner="Carregando dados...")
 def fetch_yfinance_data(ticker: str, start_date: str, end_date: str) -> pd.DataFrame:
     """Busca dados do Yahoo Finance com tratamento robusto"""
     try:
+        # CORREÇÃO: parâmetro correto é 'ticker', não 'tickers'
         data = yf.download(
-            ticker,
+            ticker,  # ← CORRIGIDO
             start=start_date,
             end=end_date,
             auto_adjust=True,
             progress=False,
-            timeout=15,
+            timeout=30,  # Aumentei o timeout
             threads=True,
-            show_errors=False
+            show_errors=True
         )
         
         if data.empty:
+            st.warning(f"Nenhum dado encontrado para {ticker}")
             return pd.DataFrame()
         
-        # Python 3.12+: match case para tratamento de colunas
-        match ticker:
-            case '^BVSP':
-                if 'Close' in data.columns:
-                    return data[['Close']].rename(columns={'Close': ticker})
-            case _:
-                if len(data.columns) > 0:
-                    return data.iloc[:, :1]  # Pega primeira coluna
+        # CORREÇÃO: Substitui match/case por if/else para compatibilidade
+        # Isso funciona em qualquer versão do Python
+        if ticker == '^BVSP' and 'Close' in data.columns:
+            return data[['Close']].rename(columns={'Close': ticker})
+        elif len(data.columns) > 0:
+            # Pega a primeira coluna disponível
+            return data.iloc[:, :1].rename(columns={data.columns[0]: ticker})
         
         return pd.DataFrame()
         
     except Exception as e:
-        st.error(f"❌ Erro ao buscar {ticker}: {str(e)[:100]}...")
+        st.error(f"❌ Erro ao buscar {ticker}: {str(e)}")
         return pd.DataFrame()
 
 # Função principal para baixar dados
@@ -85,6 +81,7 @@ def baixar_dados(indicador_nome: str) -> pd.DataFrame:
     indicador_info = indicadores.get(indicador_nome)
     
     if not indicador_info:
+        st.error(f"Indicador {indicador_nome} não encontrado")
         return pd.DataFrame()
     
     try:
@@ -102,9 +99,9 @@ def baixar_dados(indicador_nome: str) -> pd.DataFrame:
         st.error(f"Erro ao processar {indicador_nome}: {e}")
         return pd.DataFrame()
 
-# Interface modernizada
-st.title("📊 Painel Econômico")
-st.caption(f"Última atualização: {get_brasil_time().strftime('%d/%m/%Y %H:%M')}")
+# Interface
+st.title("📊 Painel Econômico - Brasil")
+st.caption(f"Última atualização: {get_brasil_time().strftime('%d/%m/%Y %H:%M')} (Horário de Brasília)")
 
 # Sidebar
 with st.sidebar:
@@ -113,50 +110,48 @@ with st.sidebar:
     indicador_selecionado = st.selectbox(
         "**Selecione o indicador:**",
         options=list(indicadores.keys()),
-        index=0,
-        help="Escolha o indicador econômico para visualização"
-    )
-    
-    # Filtro de período (opcional)
-    periodo = st.selectbox(
-        "**Período:**",
-        options=["Todo o histórico", "Últimos 5 anos", "Último ano", "Últimos 6 meses"],
         index=0
     )
     
     st.divider()
-    st.markdown("### 📈 Fontes de Dados")
-    st.info("""
-    **Yahoo Finance:**
-    - Índices B3 (Ibovespa)
-   
     
-    **Banco Central:**
-    - Indicadores macroeconômicos
-    - Séries históricas
-    """)
+    # Botão de atualização corrigido
+    if st.button("🔄 Atualizar dados", type="secondary", use_container_width=True):
+        # Limpa cache específico
+        fetch_yfinance_data.clear()
+        baixar_dados.clear()
+        st.rerun()
     
     st.divider()
-    if st.button("🔄 Atualizar dados", type="secondary"):
-        st.cache_data.clear()
-        st.rerun()
+    st.markdown("### 📈 Fontes de Dados")
+    st.info("""
+    - **Yahoo Finance:** Índices B3 (Ibovespa)
+    - **Banco Central:** Indicadores macroeconômicos
+    """)
 
 # Layout principal
 tab1, tab2, tab3 = st.tabs(["📈 Gráfico", "📊 Tabela", "ℹ️ Informações"])
 
 with tab1:
-    dados = baixar_dados(indicador_selecionado)
+    with st.spinner("Carregando dados..."):
+        dados = baixar_dados(indicador_selecionado)
     
-    if not dados.empty:
+    if not dados.empty and len(dados) > 0:
         col1, col2, col3, col4 = st.columns(4)
         
         with col1:
             valor_atual = dados.iloc[-1, 0]
+            delta = None
+            if len(dados) > 1:
+                try:
+                    delta = ((dados.iloc[-1, 0] / dados.iloc[-2, 0]) - 1) * 100
+                except:
+                    delta = None
+            
             st.metric(
                 label="Valor Atual",
                 value=f"{valor_atual:,.2f}",
-                delta=f"{((dados.iloc[-1, 0] / dados.iloc[-2, 0]) - 1) * 100:.2f}%" 
-                if len(dados) > 1 else None,
+                delta=f"{delta:.2f}%" if delta is not None else None,
                 delta_color="normal"
             )
         
@@ -172,79 +167,51 @@ with tab1:
         # Gráfico
         fig = go.Figure()
         
-        # Configurações baseadas no tipo de indicador
+        # Escolhe cor baseada no tipo de indicador
         if any(x in indicador_selecionado for x in ['Taxa', 'IPCA', 'Desemprego']):
-            fig.add_trace(go.Scatter(
-                x=dados.index,
-                y=dados[dados.columns[0]],
-                name=indicador_selecionado,
-                line=dict(width=3, color='#FF6B6B'),
-                fill='tozeroy',
-                fillcolor='rgba(255, 107, 107, 0.2)',
-                mode='lines+markers'
-            ))
+            cor = '#FF6B6B'
+            fill = 'tozeroy'
         else:
-            fig.add_trace(go.Scatter(
-                x=dados.index,
-                y=dados[dados.columns[0]],
-                name=indicador_selecionado,
-                line=dict(width=2, color='#1E88E5'),
-                mode='lines'
-            ))
+            cor = '#1E88E5'
+            fill = None
+        
+        fig.add_trace(go.Scatter(
+            x=dados.index,
+            y=dados[dados.columns[0]],
+            name=indicador_selecionado,
+            line=dict(width=2, color=cor),
+            fill=fill,
+            mode='lines'
+        ))
         
         fig.update_layout(
-            title={
-                'text': f"<b>{indicador_selecionado}</b><br>"
-                       f"<span style='font-size:0.8em;color:gray'>"
-                       f"{dados.index.min().strftime('%d/%m/%Y')} a {dados.index.max().strftime('%d/%m/%Y')}"
-                       f"</span>",
-                'x': 0.05,
-                'xanchor': 'left'
-            },
+            title=f"{indicador_selecionado} ({dados.index.min().strftime('%d/%m/%Y')} a {dados.index.max().strftime('%d/%m/%Y')})",
             xaxis_title="Data",
             yaxis_title=indicadores[indicador_selecionado]['unidade'],
-            height=600,
+            height=500,
             hovermode="x unified",
-            template="plotly_white",
-            showlegend=True,
-            legend=dict(
-                yanchor="top",
-                y=0.99,
-                xanchor="left",
-                x=0.01
-            )
+            template="plotly_white"
         )
         
-        st.plotly_chart(fig, use_container_width=True, theme=None)
+        st.plotly_chart(fig, use_container_width=True)
     else:
-        st.warning(f"⚠️ Não foi possível carregar dados para {indicador_selecionado}")
-        st.info("Tente selecionar outro indicador ou atualizar a página.")
+        st.error(f"⚠️ Não foi possível carregar dados para {indicador_selecionado}")
+        st.info("Verifique sua conexão com a internet ou tente outro indicador.")
 
 with tab2:
     if 'dados' in locals() and not dados.empty:
         st.subheader("Dados Tabelados")
         
-        # Formatação dos dados
-        dados_formatados = dados.copy()
-        dados_formatados.index = dados_formatados.index.strftime('%d/%m/%Y')
-        dados_formatados.columns = [f"{indicador_selecionado} ({indicadores[indicador_selecionado]['unidade']})"]
+        # Formatação
+        dados_display = dados.copy()
+        dados_display.index = dados_display.index.strftime('%d/%m/%Y')
+        dados_display.columns = [f"{indicador_selecionado}"]
         
         st.dataframe(
-            dados_formatados.sort_index(ascending=False),
+            dados_display.sort_index(ascending=False),
             use_container_width=True,
             height=400
         )
-        
-        # Estatísticas
-        st.subheader("Estatísticas descritivas")
-        col1, col2 = st.columns(2)
-        
-        with col1:
-            st.write(dados.describe())
-        
-        with col2:
-            st.metric("Observações", len(dados))
-            st.metric("Período (dias)", (dados.index.max() - dados.index.min()).days)
         
         # Download
         csv = dados.to_csv()
@@ -252,36 +219,29 @@ with tab2:
             label="📥 Download CSV",
             data=csv,
             file_name=f"{indicador_selecionado.replace(' ', '_').lower()}.csv",
-            mime="text/csv",
-            type="primary"
+            mime="text/csv"
         )
 
 with tab3:
-    st.subheader(f"Sobre {indicador_selecionado}")
+    st.subheader(f"Informações sobre {indicador_selecionado}")
     
-    info_text = {
+    descricoes = {
         'Ibovespa': "Principal indicador do desempenho médio das cotações das ações negociadas na B3.",
         'PIB Total': "Produto Interno Bruto - soma de todos os bens e serviços finais produzidos.",
         'Taxa Selic': "Taxa básica de juros da economia brasileira, definida pelo COPOM.",
         'IPCA Mensal': "Índice Nacional de Preços ao Consumidor Amplo - inflação oficial do Brasil.",
         'Câmbio USD/BRL': "Taxa de câmbio dólar americano/real brasileiro.",
         'Taxa de Desemprego': "Porcentagem da população economicamente ativa que está desempregada."
-       
     }
     
-    st.info(info_text.get(indicador_selecionado, "Informações detalhadas sobre este indicador."))
+    st.info(descricoes.get(indicador_selecionado, "Indicador econômico."))
     
     if not dados.empty:
         st.write(f"**Unidade:** {indicadores[indicador_selecionado]['unidade']}")
         st.write(f"**Fonte:** {indicadores[indicador_selecionado]['fonte']}")
-        st.write(f"**Primeira data disponível:** {dados.index.min().strftime('%d/%m/%Y')}")
-        st.write(f"**Última atualização:** {dados.index.max().strftime('%d/%m/%Y')}")
+        st.write(f"**Período disponível:** {dados.index.min().strftime('%d/%m/%Y')} a {dados.index.max().strftime('%d/%m/%Y')}")
+        st.write(f"**Total de observações:** {len(dados)}")
 
 # Rodapé
 st.divider()
-st.caption("""
-<div style='text-align: center; color: #666;'>
-    <p>Dashboard desenvolvido com Python 3.12 • Streamlit • Yahoo Finance API • BCB API</p>
-    <p>Dados atualizados automaticamente • Fonte: Yahoo Finance e Banco Central do Brasil</p>
-</div>
-""", unsafe_allow_html=True)
+st.caption("Dashboard desenvolvido com Python • Streamlit • Dados: Yahoo Finance e Banco Central do Brasil")

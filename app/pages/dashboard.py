@@ -50,7 +50,7 @@ def fetch_yfinance_data(ticker: str, start_date: str, end_date: str) -> pd.DataF
     """Busca dados do Yahoo Finance com tratamento robusto"""
     try:
         data = yf.download(
-            tickers=ticker,
+            ticker,
             start=start_date,
             end=end_date,
             auto_adjust=True,

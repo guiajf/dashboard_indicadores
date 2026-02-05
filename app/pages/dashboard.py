@@ -44,29 +44,32 @@ indicadores = {
 def fetch_yfinance_data(ticker: str, start_date: str, end_date: str) -> pd.DataFrame:
     """Busca dados do Yahoo Finance com tratamento robusto"""
     try:
-        # CORREÇÃO: parâmetro correto é 'ticker', não 'tickers'
+        # PARA yfinance 1.1.0 - parâmetros corretos
         data = yf.download(
-            ticker,  # ← CORRIGIDO
+            tickers=ticker,
             start=start_date,
             end=end_date,
             auto_adjust=True,
             progress=False,
-            timeout=30,  # Aumentei o timeout
-            threads=True,
-            show_errors=True
+            timeout=30,
+            threads=True
+            # NÃO USAR: show_errors (não existe na 1.1.0)
         )
         
         if data.empty:
-            st.warning(f"Nenhum dado encontrado para {ticker}")
+            st.warning(f"⚠️ Nenhum dado encontrado para {ticker}")
             return pd.DataFrame()
         
-        # CORREÇÃO: Substitui match/case por if/else para compatibilidade
-        # Isso funciona em qualquer versão do Python
-        if ticker == '^BVSP' and 'Close' in data.columns:
-            return data[['Close']].rename(columns={'Close': ticker})
+        # Verifica se temos a coluna Close
+        if 'Close' in data.columns:
+            df_result = data[['Close']].copy()
+            df_result.columns = [ticker]
+            return df_result
         elif len(data.columns) > 0:
-            # Pega a primeira coluna disponível
-            return data.iloc[:, :1].rename(columns={data.columns[0]: ticker})
+            # Pega primeira coluna disponível
+            df_result = data.iloc[:, [0]].copy()
+            df_result.columns = [ticker]
+            return df_result
         
         return pd.DataFrame()
         

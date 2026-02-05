@@ -1,9 +1,6 @@
-# Python 3.12 compatible versions
-yfinance>=0.2.36
-pandas>=2.2.0
-plotly>=5.18.0
-streamlit>=1.29.0
-python-dotenv>=1.0.0
+# Mantenha apenas o essencial. Evite versões "latest".
+yfinance==0.2.36
+pandas==2.2.0  # Tente uma versão ligeiramente anterior se 2.2.0 for muito pesada
+plotly==5.18.0
+streamlit==1.29.0
 python-bcb>=0.3.3
-cachetools>=5.3.2
-numpy>=1.24.0  # Exigência do pandas 2.2+

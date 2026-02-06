@@ -1,13 +1,13 @@
-# Dependências principais
-streamlit==1.28.0  # Use 1.28.0 (mais estável)
+# Streamlit Cloud - Python 3.12 Compatible
+streamlit==1.28.0
 yfinance==0.2.36
-pandas==2.1.4  # Downgrade para versão mais leve
-numpy==1.24.3  # NECESSÁRIO! Adicione esta linha
+pandas==2.1.4
+numpy==1.26.4  # ← MUDADO: compatível com pandas 2.1.4
 plotly==5.18.0
-
-# BCB com versão fixa
-python-bcb==0.3.3  
-
-# Dependências extras para yfinance
+python-bcb==0.3.3
 lxml==4.9.3
 requests==2.31.0
+
+# Adicione estas linhas para resolver distutils
+setuptools==69.0.3
+wheel==0.42.0

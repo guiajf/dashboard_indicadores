@@ -51,7 +51,7 @@ def main():
     }
     
     # Cache otimizado
-    @st.cache_data(ttl=1800, show_spinner="Carregando dados...")
+    @st.cache_data(ttl=3600, show_spinner="Carregando dados...")
     def fetch_yfinance_data(ticker: str, start_date: str, end_date: str) -> pd.DataFrame:
         """Busca dados do Yahoo Finance com tratamento robusto"""
         try:

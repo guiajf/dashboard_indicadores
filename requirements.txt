@@ -1,6 +1,6 @@
 # Streamlit Cloud - Python 3.12 Compatible
 streamlit==1.28.0
-yfinance==0.2.36
+yfinance==1.1.0
 pandas==2.1.4
 numpy==1.26.4  # ← MUDADO: compatível com pandas 2.1.4
 plotly==5.18.0

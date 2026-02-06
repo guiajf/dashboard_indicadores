@@ -1,6 +1,13 @@
-# Mantenha apenas o essencial. Evite versões "latest".
+# Dependências principais
+streamlit==1.28.0  # Use 1.28.0 (mais estável)
 yfinance==0.2.36
-pandas==2.2.0  # Tente uma versão ligeiramente anterior se 2.2.0 for muito pesada
+pandas==2.1.4  # Downgrade para versão mais leve
+numpy==1.24.3  # NECESSÁRIO! Adicione esta linha
 plotly==5.18.0
-streamlit==1.29.0
-python-bcb>=0.3.3
+
+# BCB com versão fixa
+bcb==1.1.0  # Use 'bcb' (não 'python-bcb') e versão específica
+
+# Dependências extras para yfinance
+lxml==4.9.3
+requests==2.31.0

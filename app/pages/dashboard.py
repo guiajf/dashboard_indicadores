@@ -1,4 +1,13 @@
 import streamlit as st
+
+# Configuração da página
+st.set_page_config(
+    page_title="Dashboard Econômico Brasil",
+    page_icon="📈",
+    layout="wide",
+    initial_sidebar_state="expanded"
+)
+
 import yfinance as yf
 import pandas as pd
 from datetime import datetime, timedelta, timezone
@@ -21,13 +30,7 @@ st.sidebar.info(f"Python {sys.version}")
 # Suprimir warnings
 warnings.filterwarnings("ignore", category=FutureWarning)
 
-# Configuração da página
-st.set_page_config(
-    page_title="Dashboard Econômico Brasil",
-    page_icon="📈",
-    layout="wide",
-    initial_sidebar_state="expanded"
-)
+def main():
 
 # Configuração inicial com fuso horário
 def get_brasil_time():
@@ -256,3 +259,6 @@ with tab3:
 # Rodapé
 st.divider()
 st.caption("Dashboard desenvolvido com Python • Streamlit • Dados: Yahoo Finance e Banco Central do Brasil")
+
+if __name__ == "__main__":
+    main()

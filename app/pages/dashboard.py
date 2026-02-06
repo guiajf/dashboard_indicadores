@@ -2,7 +2,7 @@ import streamlit as st
 
 # Configuração da página
 st.set_page_config(
-    page_title="Dashboard Econômico Brasil",
+    page_title="Painel de indicadores econômicos",
     page_icon="📈",
     layout="wide",
     initial_sidebar_state="expanded"
@@ -114,7 +114,7 @@ def main():
             return pd.DataFrame()
     
     # Interface
-    st.title("📊 Painel Econômico - Brasil")
+    st.title("📊 Painel de indicadores econômicos")
     st.caption(f"Última atualização: {get_brasil_time().strftime('%d/%m/%Y %H:%M')} (Horário de Brasília)")
     
     # Sidebar
@@ -137,7 +137,7 @@ def main():
             st.rerun()
         
         st.divider()
-        st.markdown("### 📈 Fontes de Dados")
+        st.markdown("### 📈 Fontes de dados")
         st.info("""
         - **Yahoo Finance:** Índices B3 (Ibovespa)
         - **Banco Central:** Indicadores macroeconômicos

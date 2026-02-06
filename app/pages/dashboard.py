@@ -4,8 +4,16 @@ import pandas as pd
 from datetime import datetime, timedelta, timezone
 import plotly.graph_objects as go
 import warnings
-from bcb import sgs
 import sys
+
+try:
+    from bcb import sgs
+except ImportError:
+    # Fallback para versões antigas
+    import sys
+    import subprocess
+    subprocess.check_call([sys.executable, "-m", "pip", "install", "bcb==1.1.0"])
+    from bcb import sgs
 
 # Verificar versão do Python
 st.sidebar.info(f"Python {sys.version}")

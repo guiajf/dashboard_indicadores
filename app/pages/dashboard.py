@@ -14,6 +14,7 @@ from datetime import datetime, timedelta, timezone
 import plotly.graph_objects as go
 import warnings
 import sys
+import pytz
 
 try:
     from bcb import sgs
@@ -34,8 +35,14 @@ def main():
 
     # Configuração inicial com fuso horário
     def get_brasil_time():
-        """Retorna o horário atual de Brasília"""
-        return datetime.now(timezone.utc).astimezone()
+        """Retorna o horário atual de Brasília (America/Sao_Paulo)"""
+        try:
+            # Método mais robusto com pytz
+            brasil_tz = pytz.timezone('America/Sao_Paulo')
+            return datetime.now(brasil_tz)
+        except:
+            # Fallback para UTC-3
+            return datetime.now(timezone.utc) - timedelta(hours=3)
     
     start_date = '1994-07-01'
     end_date = (get_brasil_time() + timedelta(days=1)).strftime('%Y-%m-%d')

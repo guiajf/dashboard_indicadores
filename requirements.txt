@@ -6,7 +6,7 @@ numpy==1.24.3  # NECESSÁRIO! Adicione esta linha
 plotly==5.18.0
 
 # BCB com versão fixa
-bcb==1.1.0  # Use 'bcb' (não 'python-bcb') e versão específica
+python-bcb==0.3.3  
 
 # Dependências extras para yfinance
 lxml==4.9.3

@@ -54,6 +54,6 @@ streamlit run arquivo.py --server.port=8501
 ### Atualizações Futuras:
 Quando fizer mudanças no GitHub:
 
-* Commit e push para o branch main*
+* Commit e push para o branch main
 *  **Streamlit Cloud** detecta automaticamente
 * Faz *redeploy* instatâneo

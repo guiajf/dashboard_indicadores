@@ -12,12 +12,12 @@ Dashboard interativo para monitoramento de indicadores econômicos brasileiros.
 1. Acesse [Streamlit](share.streamlit.io)
 2. Faça login com sua conta do GitHub
 3. Clique: "Create app"
-5. Clique: "Create a public app from GitHub"
-6. Selecione:
+4. Clique: "Create a public app from GitHub"
+5. Selecione:
    - Repo: seu-repositorio-github
    - Branch: main
    - Main file path: caminho-do-arquivo-no-repositório
-7. Clique em "Deploy"
+6. Clique em "Deploy"
 
 
 ### ATENÇÃO

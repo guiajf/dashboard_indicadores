@@ -34,7 +34,7 @@ streamlit config show  # Verifica configurações
 streamlit run arquivo.py --server.port=8501
 ```
 
-### Formas de Compartilhar:
+### Formas de compartilhar:
 
 1. **Link direto**: https://seu-app.streamlit.app
 2. **QR Code**: Gerar para acesso mobile
@@ -47,11 +47,11 @@ streamlit run arquivo.py --server.port=8501
 * **Errors**: Logs de erros em tempo real
 * **Settings**: Recursos, variáveis de ambiente
 
-### Para Acessar Logs:
+### Para Acessar logs:
 1. No **Streamlit Cloud**: Seu app → ⋯ (menu) → View app logs
 2. Ou via **URL**: https://seu-app.streamlit.app/_logs
    
-### Atualizações Futuras:
+### Atualizações futuras:
 Quando fizer mudanças no GitHub:
 
 * Commit e push para o branch main

@@ -1,4 +1,6 @@
 import streamlit as st
+import os
+os.environ['STREAMLIT_SERVER_FILE_WATCHER_TYPE'] = 'none'
 
 # Configuração da página
 st.set_page_config(
